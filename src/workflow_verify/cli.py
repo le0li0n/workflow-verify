@@ -17,14 +17,21 @@ def _build_parser() -> argparse.ArgumentParser:
     # --- verify ---
     p_verify = subparsers.add_parser("verify", help="Verify a workflow JSON file")
     p_verify.add_argument("file", help="Path to workflow JSON file")
-    p_verify.add_argument("--json", action="store_true", dest="json_output", help="Output results as JSON")
-    p_verify.add_argument("--no-strict", action="store_true", help="Treat undeclared effects as warnings")
+    p_verify.add_argument(
+        "--json", action="store_true", dest="json_output", help="Output as JSON",
+    )
+    p_verify.add_argument(
+        "--no-strict", action="store_true", help="Treat undeclared effects as warnings",
+    )
 
     # --- transpile ---
     p_transpile = subparsers.add_parser("transpile", help="Verify and transpile a workflow")
     p_transpile.add_argument("file", help="Path to workflow JSON file")
-    p_transpile.add_argument("-t", "--target", required=True, choices=["python", "typescript", "temporal"],
-                             help="Transpile target language")
+    p_transpile.add_argument(
+        "-t", "--target", required=True,
+        choices=["python", "typescript", "temporal"],
+        help="Transpile target language",
+    )
     p_transpile.add_argument("-o", "--output", help="Output file path (default: stdout)")
 
     # --- registry ---
@@ -43,11 +50,20 @@ def _build_parser() -> argparse.ArgumentParser:
     # --- generate ---
     p_generate = subparsers.add_parser("generate", help="Generate a workflow from a prompt")
     p_generate.add_argument("prompt", help="Natural language workflow description")
-    p_generate.add_argument("-t", "--target", default="python", choices=["python", "typescript", "temporal"],
-                            help="Transpile target (default: python)")
-    p_generate.add_argument("--llm", default="anthropic", choices=["anthropic", "openai"],
-                            help="LLM provider (default: anthropic)")
-    p_generate.add_argument("--max-attempts", type=int, default=3, help="Max correction attempts (default: 3)")
+    p_generate.add_argument(
+        "-t", "--target", default="python",
+        choices=["python", "typescript", "temporal"],
+        help="Transpile target (default: python)",
+    )
+    p_generate.add_argument(
+        "--llm", default="anthropic",
+        choices=["anthropic", "openai"],
+        help="LLM provider (default: anthropic)",
+    )
+    p_generate.add_argument(
+        "--max-attempts", type=int, default=3,
+        help="Max correction attempts (default: 3)",
+    )
 
     return parser
 
@@ -89,7 +105,7 @@ def _cmd_verify(args: argparse.Namespace) -> int:
             for effect in result.effects_manifest:
                 print(f"  {effect.kind}:{effect.target}")
         if result.passed:
-            print(f"\nVerification passed.")
+            print("\nVerification passed.")
         else:
             print(f"\nVerification failed with {len(result.errors)} error(s).", file=sys.stderr)
 
@@ -145,7 +161,9 @@ def _cmd_registry(args: argparse.Namespace) -> int:
         if args.category:
             categories = list_categories()
             if args.category not in categories:
-                print(f"Error: unknown category '{args.category}'. Available: {', '.join(categories)}", file=sys.stderr)
+                avail = ", ".join(categories)
+                msg = f"Error: unknown category '{args.category}'. Available: {avail}"
+                print(msg, file=sys.stderr)
                 return 1
             schemas = list_schemas(args.category)
         else:

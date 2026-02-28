@@ -28,20 +28,6 @@ from workflow_verify.ast.types import (
     is_compatible,
 )
 
-# --- Verification ---
-from workflow_verify.verify import (
-    CheckResult,
-    VerificationResult,
-    verify,
-)
-
-# --- Transpilation ---
-from workflow_verify.transpile import (
-    TranspileResult,
-    TranspileTarget,
-    transpile,
-)
-
 # --- Self-correction ---
 from workflow_verify.correct import (
     Attempt,
@@ -64,6 +50,20 @@ from workflow_verify.registry import (
 
 # --- Trace ---
 from workflow_verify.trace.reporter import format_trace
+
+# --- Transpilation ---
+from workflow_verify.transpile import (
+    TranspileResult,
+    TranspileTarget,
+    transpile,
+)
+
+# --- Verification ---
+from workflow_verify.verify import (
+    CheckResult,
+    VerificationResult,
+    verify,
+)
 
 if TYPE_CHECKING:
     pass

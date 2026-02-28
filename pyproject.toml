@@ -9,6 +9,31 @@ description = "Pre-execution verification layer for LLM-generated agentic workfl
 readme = "README.md"
 license = "MIT"
 requires-python = ">=3.10"
+authors = [
+    { name = "Jared" },
+]
+keywords = [
+    "llm",
+    "workflow",
+    "verification",
+    "agentic",
+    "type-safety",
+    "transpiler",
+    "code-generation",
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Software Development :: Code Generators",
+    "Topic :: Software Development :: Quality Assurance",
+    "Typing :: Typed",
+]
 dependencies = [
     "pydantic>=2.0",
     "pyyaml>=6.0",
@@ -17,10 +42,40 @@ dependencies = [
 [project.optional-dependencies]
 llm = ["anthropic", "openai"]
 temporal = ["temporalio"]
-dev = ["pytest", "pytest-cov"]
+dev = [
+    "pytest",
+    "pytest-asyncio",
+    "pytest-cov",
+    "ruff",
+    "mypy",
+]
+
+[project.urls]
+Homepage = "https://github.com/your-org/workflow-verify"
+Documentation = "https://github.com/your-org/workflow-verify#readme"
+Repository = "https://github.com/your-org/workflow-verify"
+Issues = "https://github.com/your-org/workflow-verify/issues"
+Changelog = "https://github.com/your-org/workflow-verify/blob/main/CHANGELOG.md"
 
 [project.scripts]
 wfv = "workflow_verify.cli:main"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/workflow_verify"]
+
+[tool.ruff]
+target-version = "py310"
+line-length = 100
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]
+
+[tool.mypy]
+python_version = "3.10"
+warn_return_any = true
+warn_unused_configs = true
+ignore_missing_imports = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+asyncio_mode = "auto"
