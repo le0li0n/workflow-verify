@@ -1,0 +1,17 @@
+name: Company
+description: A basic company record
+source: common
+fields:
+  - name: name
+    type: Text
+    validate: "value is not null"
+  - name: domain
+    type: Url
+  - name: industry
+    type: Text
+  - name: employee_count
+    type: Int
+  - name: country
+    type: Text
+  - name: city
+    type: Text

@@ -1,0 +1,14 @@
+name: Address
+description: A physical mailing address
+source: common
+fields:
+  - name: street
+    type: Text
+  - name: city
+    type: Text
+  - name: state
+    type: Text
+  - name: postal_code
+    type: Text
+  - name: country
+    type: Text

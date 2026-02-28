@@ -1,0 +1,25 @@
+name: SalesforceContact
+description: A contact record from Salesforce
+source: salesforce
+fields:
+  - name: id
+    type: Text
+    description: Salesforce record ID
+  - name: first_name
+    type: Text
+  - name: last_name
+    type: Text
+  - name: email
+    type: Email
+    validate: "value is not null"
+  - name: phone
+    type: Phone
+  - name: account_id
+    type: Text
+    description: Associated account ID
+  - name: title
+    type: Text
+  - name: department
+    type: Text
+  - name: mailing_address
+    type: Text

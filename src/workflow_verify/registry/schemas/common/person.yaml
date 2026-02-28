@@ -1,0 +1,15 @@
+name: Person
+description: A basic person record
+source: common
+fields:
+  - name: first_name
+    type: Text
+  - name: last_name
+    type: Text
+  - name: email
+    type: Email
+  - name: phone
+    type: Phone
+  - name: title
+    type: Text
+    description: Job title

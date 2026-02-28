@@ -1,0 +1,16 @@
+name: CsvRow
+description: A generic CSV row with common fields
+source: csv
+fields:
+  - name: row_number
+    type: Int
+    description: 1-indexed row number
+  - name: data
+    type: Json
+    description: Row data as key-value pairs
+  - name: raw_line
+    type: Text
+    description: Original CSV line
+  - name: source_file
+    type: Text
+    description: Source filename

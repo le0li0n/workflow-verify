@@ -1,0 +1,28 @@
+name: StripeCustomer
+description: A customer record from Stripe
+source: stripe
+fields:
+  - name: id
+    type: Text
+    description: "Stripe customer ID (cus_...)"
+  - name: email
+    type: Email
+  - name: name
+    type: Text
+  - name: phone
+    type: Phone
+  - name: currency
+    type: Text
+    description: Three-letter ISO currency code
+  - name: created
+    type: DateTime
+    description: Unix timestamp of creation
+  - name: balance
+    type: Int
+    description: Balance in smallest currency unit (cents)
+  - name: default_source
+    type: Text
+    description: Default payment source ID
+  - name: metadata
+    type: Json
+    description: Arbitrary key-value metadata

@@ -1,0 +1,24 @@
+name: ClayEnrichment
+description: Enrichment data from Clay
+source: clay
+fields:
+  - name: email
+    type: Email
+  - name: full_name
+    type: Text
+  - name: company_name
+    type: Text
+  - name: title
+    type: Text
+  - name: linkedin_url
+    type: Url
+  - name: company_size
+    type: Text
+    description: "Company size range (1-10, 11-50, 51-200, etc.)"
+  - name: industry
+    type: Text
+  - name: location
+    type: Text
+  - name: enrichment_score
+    type: Float
+    description: Confidence score of the enrichment

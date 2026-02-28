@@ -1,0 +1,23 @@
+name: SlackMessage
+description: A Slack message payload
+source: slack
+fields:
+  - name: channel
+    type: Text
+    description: Channel ID or name
+    validate: "value is not null"
+  - name: text
+    type: Text
+    description: Message text (supports mrkdwn)
+  - name: blocks
+    type: Json
+    description: Block Kit blocks for rich formatting
+  - name: thread_ts
+    type: Text
+    description: Thread timestamp for replying in a thread
+  - name: username
+    type: Text
+    description: Bot username override
+  - name: icon_emoji
+    type: Text
+    description: Bot icon emoji override

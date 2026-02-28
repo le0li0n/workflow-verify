@@ -1,0 +1,26 @@
+name: SalesforceOpportunity
+description: An opportunity record from Salesforce
+source: salesforce
+fields:
+  - name: id
+    type: Text
+    description: Salesforce record ID
+  - name: name
+    type: Text
+    description: Opportunity name
+  - name: account_id
+    type: Text
+  - name: amount
+    type: Float
+    description: Deal value
+  - name: stage
+    type: Text
+    description: "Sales stage (Prospecting, Qualification, Closed Won, etc.)"
+  - name: close_date
+    type: Date
+  - name: probability
+    type: Int
+    description: Win probability percentage
+    validate: "value >= 0"
+  - name: owner_id
+    type: Text

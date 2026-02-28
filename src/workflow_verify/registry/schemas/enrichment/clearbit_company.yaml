@@ -1,0 +1,27 @@
+name: ClearbitCompany
+description: Company enrichment data from Clearbit
+source: clearbit
+fields:
+  - name: domain
+    type: Url
+  - name: name
+    type: Text
+  - name: industry
+    type: Text
+  - name: sector
+    type: Text
+  - name: employee_count
+    type: Int
+    validate: "value >= 0"
+  - name: raised
+    type: Float
+    description: Total funding raised in USD
+  - name: annual_revenue
+    type: Float
+  - name: tech_stack
+    type: Json
+    description: Array of technologies used
+  - name: country
+    type: Text
+  - name: city
+    type: Text

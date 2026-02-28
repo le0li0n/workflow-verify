@@ -1,0 +1,27 @@
+name: SalesforceLead
+description: A lead record from Salesforce
+source: salesforce
+fields:
+  - name: id
+    type: Text
+    description: Salesforce record ID
+  - name: first_name
+    type: Text
+  - name: last_name
+    type: Text
+  - name: email
+    type: Email
+    validate: "value is not null"
+  - name: company
+    type: Text
+  - name: title
+    type: Text
+    description: Job title
+  - name: status
+    type: Text
+    description: "Lead status (New, Working, Qualified, etc.)"
+  - name: lead_source
+    type: Text
+    description: How the lead was acquired
+  - name: phone
+    type: Phone

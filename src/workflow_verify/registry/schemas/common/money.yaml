@@ -1,0 +1,11 @@
+name: Money
+description: A monetary amount with currency
+source: common
+fields:
+  - name: amount
+    type: Float
+    validate: "value >= 0"
+  - name: currency
+    type: Text
+    description: "Three-letter ISO 4217 currency code (USD, EUR, GBP, etc.)"
+    validate: "value is not null"

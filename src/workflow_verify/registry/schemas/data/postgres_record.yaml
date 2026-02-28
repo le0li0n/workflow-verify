@@ -1,0 +1,15 @@
+name: PostgresRecord
+description: A generic PostgreSQL query result record
+source: postgres
+fields:
+  - name: table_name
+    type: Text
+    description: Source table
+  - name: row_data
+    type: Json
+    description: Row data as key-value pairs
+  - name: primary_key
+    type: Text
+    description: Primary key value
+  - name: updated_at
+    type: DateTime

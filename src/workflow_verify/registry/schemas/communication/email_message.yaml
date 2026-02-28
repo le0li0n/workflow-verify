@@ -1,0 +1,24 @@
+name: EmailMessage
+description: An email message for sending
+source: email
+fields:
+  - name: to
+    type: Email
+    validate: "value is not null"
+  - name: from_address
+    type: Email
+  - name: subject
+    type: Text
+    validate: "value is not null"
+  - name: body_html
+    type: Text
+  - name: body_text
+    type: Text
+  - name: cc
+    type: Json
+    description: Array of CC email addresses
+  - name: bcc
+    type: Json
+    description: Array of BCC email addresses
+  - name: reply_to
+    type: Email

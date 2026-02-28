@@ -1,0 +1,23 @@
+name: HubSpotDeal
+description: A deal record from HubSpot CRM
+source: hubspot
+fields:
+  - name: deal_id
+    type: Text
+    description: HubSpot deal ID
+  - name: dealname
+    type: Text
+  - name: amount
+    type: Float
+  - name: dealstage
+    type: Text
+    description: Pipeline stage
+  - name: closedate
+    type: Date
+  - name: pipeline
+    type: Text
+  - name: hubspot_owner_id
+    type: Text
+  - name: associated_contact_ids
+    type: Json
+    description: Array of associated contact IDs

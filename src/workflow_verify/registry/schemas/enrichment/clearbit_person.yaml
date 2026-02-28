@@ -1,0 +1,29 @@
+name: ClearbitPerson
+description: Person enrichment data from Clearbit
+source: clearbit
+fields:
+  - name: email
+    type: Email
+  - name: full_name
+    type: Text
+  - name: first_name
+    type: Text
+  - name: last_name
+    type: Text
+  - name: title
+    type: Text
+    description: Job title
+  - name: role
+    type: Text
+    description: "Job role (engineering, sales, marketing, etc.)"
+  - name: seniority
+    type: Text
+    description: "Seniority level (executive, director, manager, etc.)"
+  - name: company_name
+    type: Text
+  - name: company_domain
+    type: Url
+  - name: linkedin_url
+    type: Url
+  - name: location
+    type: Text

@@ -1,0 +1,19 @@
+name: WebhookPayload
+description: A generic webhook payload
+source: webhook
+fields:
+  - name: url
+    type: Url
+    validate: "value is not null"
+  - name: method
+    type: Text
+    description: "HTTP method (POST, PUT, PATCH)"
+  - name: headers
+    type: Json
+    description: HTTP headers as key-value pairs
+  - name: body
+    type: Json
+    description: Request body payload
+  - name: timeout_seconds
+    type: Int
+    description: Request timeout

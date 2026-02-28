@@ -1,0 +1,25 @@
+name: CRMZeroContact
+description: A contact record from CRM Zero
+source: crmzero
+fields:
+  - name: id
+    type: Text
+    description: CRM Zero contact ID
+  - name: name
+    type: Text
+  - name: email
+    type: Email
+    validate: "value is not null"
+  - name: phone
+    type: Phone
+  - name: company
+    type: Text
+  - name: title
+    type: Text
+  - name: tags
+    type: Json
+    description: Array of tag strings
+  - name: created_at
+    type: DateTime
+  - name: updated_at
+    type: DateTime

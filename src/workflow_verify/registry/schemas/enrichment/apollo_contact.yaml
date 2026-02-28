@@ -1,0 +1,29 @@
+name: ApolloContact
+description: Contact enrichment data from Apollo.io
+source: apollo
+fields:
+  - name: id
+    type: Text
+    description: Apollo contact ID
+  - name: email
+    type: Email
+  - name: first_name
+    type: Text
+  - name: last_name
+    type: Text
+  - name: title
+    type: Text
+  - name: company_name
+    type: Text
+  - name: company_domain
+    type: Url
+  - name: seniority
+    type: Text
+  - name: departments
+    type: Json
+    description: Array of department strings
+  - name: phone_numbers
+    type: Json
+    description: Array of phone number objects
+  - name: linkedin_url
+    type: Url

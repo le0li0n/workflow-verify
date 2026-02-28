@@ -1,0 +1,25 @@
+name: HubSpotContact
+description: A contact record from HubSpot CRM
+source: hubspot
+fields:
+  - name: vid
+    type: Text
+    description: HubSpot contact ID
+  - name: firstname
+    type: Text
+  - name: lastname
+    type: Text
+  - name: email
+    type: Email
+    validate: "value is not null"
+  - name: phone
+    type: Phone
+  - name: company
+    type: Text
+  - name: jobtitle
+    type: Text
+  - name: lifecyclestage
+    type: Text
+    description: "Lifecycle stage (subscriber, lead, opportunity, customer)"
+  - name: hs_lead_status
+    type: Text
