@@ -19,5 +19,8 @@ llm = ["anthropic", "openai"]
 temporal = ["temporalio"]
 dev = ["pytest", "pytest-cov"]
 
+[project.scripts]
+wfv = "workflow_verify.cli:main"
+
 [tool.hatch.build.targets.wheel]
 packages = ["src/workflow_verify"]
