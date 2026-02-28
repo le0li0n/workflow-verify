@@ -26,24 +26,15 @@ logger = logging.getLogger(__name__)
 
 try:
     from mcp.server.fastmcp import FastMCP
+
+    _HAS_MCP = True
 except ImportError:
-    print(
-        "Error: mcp package required. Install with: pip install 'workflow-verify[mcp]'",
-        file=sys.stderr,
-    )
-    sys.exit(1)
-
-mcp = FastMCP(
-    "workflow-verify",
-    instructions=(
-        "Pre-execution verification for LLM-generated agentic workflows. "
-        "Verify workflow ASTs for type safety, schema validity, side effects, "
-        "and guard conditions before any code executes."
-    ),
-)
+    _HAS_MCP = False
 
 
-@mcp.tool()
+# --- Tool functions (importable without mcp installed) ---
+
+
 def verify_workflow(
     workflow_json: str,
     strict: bool = True,
@@ -109,7 +100,6 @@ def verify_workflow(
     return json.dumps(output, indent=2)
 
 
-@mcp.tool()
 async def generate_verified_workflow(
     prompt: str,
     target: str = "python",
@@ -206,7 +196,27 @@ async def generate_verified_workflow(
     return json.dumps(output, indent=2)
 
 
+# --- MCP server setup (only when mcp is installed) ---
+
+
 def main() -> None:
+    if not _HAS_MCP:
+        print(
+            "Error: mcp package required. Install with: pip install 'workflow-verify[mcp]'",
+            file=sys.stderr,
+        )
+        sys.exit(1)
+
+    mcp = FastMCP(  # type: ignore[misc]
+        "workflow-verify",
+        instructions=(
+            "Pre-execution verification for LLM-generated agentic workflows. "
+            "Verify workflow ASTs for type safety, schema validity, side effects, "
+            "and guard conditions before any code executes."
+        ),
+    )
+    mcp.tool()(verify_workflow)
+    mcp.tool()(generate_verified_workflow)
     mcp.run(transport="stdio")
 
 
