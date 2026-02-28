@@ -268,8 +268,22 @@ class TestTemporalTranspiler:
 class TestRoundTrip:
     """Test the full pipeline: parse AST -> verify -> transpile -> syntax check."""
 
-    @pytest.mark.parametrize("fixture", ["valid_crm_pipeline.json", "valid_complex_pipeline.json", "valid_with_warnings.json"])
-    @pytest.mark.parametrize("target", [TranspileTarget.TYPESCRIPT, TranspileTarget.PYTHON, TranspileTarget.TEMPORAL])
+    @pytest.mark.parametrize(
+        "fixture",
+        [
+            "valid_crm_pipeline.json",
+            "valid_complex_pipeline.json",
+            "valid_with_warnings.json",
+        ],
+    )
+    @pytest.mark.parametrize(
+        "target",
+        [
+            TranspileTarget.TYPESCRIPT,
+            TranspileTarget.PYTHON,
+            TranspileTarget.TEMPORAL,
+        ],
+    )
     def test_round_trip(self, fixture: str, target: TranspileTarget):
         # Parse
         data = json.loads((FIXTURES / fixture).read_text())

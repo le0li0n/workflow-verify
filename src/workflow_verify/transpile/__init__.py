@@ -25,7 +25,7 @@ class TranspileResult(BaseModel):
     instructions: str
 
 
-def transpile(workflow: "Workflow", target: TranspileTarget) -> TranspileResult:
+def transpile(workflow: Workflow, target: TranspileTarget) -> TranspileResult:
     """Transpile a verified workflow AST to executable code.
 
     Raises ValueError if the workflow has not been verified or fails verification.
@@ -42,12 +42,15 @@ def transpile(workflow: "Workflow", target: TranspileTarget) -> TranspileResult:
 
     if target == TranspileTarget.TYPESCRIPT:
         from workflow_verify.transpile.typescript import transpile_typescript
+
         return transpile_typescript(workflow)
     elif target == TranspileTarget.PYTHON:
         from workflow_verify.transpile.python_target import transpile_python
+
         return transpile_python(workflow)
     elif target == TranspileTarget.TEMPORAL:
         from workflow_verify.transpile.temporal import transpile_temporal
+
         return transpile_temporal(workflow)
     else:
         raise ValueError(f"Unknown transpile target: {target}")

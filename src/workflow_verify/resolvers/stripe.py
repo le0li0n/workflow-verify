@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import os
-from typing import Any
 
 from workflow_verify.ast.models import FieldDef, Schema
 from workflow_verify.ast.types import WFType
@@ -120,9 +119,7 @@ class StripeResolver(SchemaResolver):
         if include_custom:
             try:
                 api_key = self._get_api_key(credentials)
-                metadata_fields = await self._discover_metadata(
-                    api_key, object_type_lower
-                )
+                metadata_fields = await self._discover_metadata(api_key, object_type_lower)
                 fields.extend(metadata_fields)
             except SchemaResolveError:
                 pass  # Proceed with base fields only
@@ -133,9 +130,7 @@ class StripeResolver(SchemaResolver):
             description=f"Stripe {object_type} schema",
         )
 
-    async def _discover_metadata(
-        self, api_key: str, object_type: str
-    ) -> list[FieldDef]:
+    async def _discover_metadata(self, api_key: str, object_type: str) -> list[FieldDef]:
         """Fetch a sample object to discover metadata keys."""
         try:
             import httpx

@@ -15,7 +15,7 @@ logger = logging.getLogger(__name__)
 _cache = SchemaCache()
 
 # Resolver registry — maps service name to resolver class
-_RESOLVERS: dict[str, type[SchemaResolver]] = {}
+_RESOLVERS: dict[str, type] = {}
 
 
 def _register_resolvers() -> None:
@@ -47,11 +47,9 @@ def get_resolver(service: str) -> SchemaResolver:
     cls = _RESOLVERS.get(service)
     if cls is None:
         available = ", ".join(sorted(_RESOLVERS.keys()))
-        raise SchemaResolveError(
-            f"No resolver for service '{service}'. "
-            f"Available: {available}"
-        )
-    return cls()
+        raise SchemaResolveError(f"No resolver for service '{service}'. Available: {available}")
+    instance: SchemaResolver = cls()
+    return instance
 
 
 def list_resolvers() -> list[str]:
@@ -148,8 +146,7 @@ def _static_fallback(service: str, object_type: str) -> Schema:
         return load_schema(matching[0])
 
     raise SchemaResolveError(
-        f"No static fallback found for {service}:{object_type}. "
-        f"Searched: {', '.join(candidates)}"
+        f"No static fallback found for {service}:{object_type}. Searched: {', '.join(candidates)}"
     )
 
 

@@ -22,8 +22,7 @@ class SchemaLoadError(Exception):
 def _parse_field_type(type_str: str) -> WFType:
     if type_str not in _VALID_TYPES:
         raise SchemaLoadError(
-            f"Invalid field type '{type_str}'. "
-            f"Valid types: {', '.join(sorted(_VALID_TYPES))}"
+            f"Invalid field type '{type_str}'. Valid types: {', '.join(sorted(_VALID_TYPES))}"
         )
     return WFType(type_str)
 
@@ -33,7 +32,7 @@ def _load_yaml(path: Path) -> dict[str, Any]:
         with open(path) as f:
             data = yaml.safe_load(f)
     except yaml.YAMLError as e:
-        raise SchemaLoadError(f"Invalid YAML in {path}: {e}")
+        raise SchemaLoadError(f"Invalid YAML in {path}: {e}") from e
 
     if not isinstance(data, dict):
         raise SchemaLoadError(f"Schema file {path} must contain a YAML mapping")
@@ -54,16 +53,16 @@ def _yaml_to_schema(data: dict[str, Any], path: Path) -> Schema:
         if "name" not in field_data:
             raise SchemaLoadError(f"Field {i} in {path} missing 'name'")
         if "type" not in field_data:
-            raise SchemaLoadError(
-                f"Field '{field_data['name']}' in {path} missing 'type'"
-            )
+            raise SchemaLoadError(f"Field '{field_data['name']}' in {path} missing 'type'")
         field_type = _parse_field_type(field_data["type"])
         fields.append(
-            FieldDef(
-                name=field_data["name"],
-                type=field_type,
-                description=field_data.get("description", ""),
-                validate=field_data.get("validate"),
+            FieldDef.model_validate(
+                {
+                    "name": field_data["name"],
+                    "type": field_type,
+                    "description": field_data.get("description", ""),
+                    "validate": field_data.get("validate"),
+                }
             )
         )
     return Schema(
@@ -87,8 +86,7 @@ def load_schema(path: str) -> Schema:
 
 def list_categories() -> list[str]:
     return sorted(
-        d.name for d in _SCHEMAS_DIR.iterdir()
-        if d.is_dir() and not d.name.startswith(".")
+        d.name for d in _SCHEMAS_DIR.iterdir() if d.is_dir() and not d.name.startswith(".")
     )
 
 
@@ -110,16 +108,18 @@ def search_schemas(keyword: str) -> list[Schema]:
     for schema_path in list_schemas():
         full_path = _SCHEMAS_DIR / f"{schema_path}.yaml"
         data = _load_yaml(full_path)
-        searchable = " ".join([
-            data.get("name", ""),
-            data.get("description", ""),
-            data.get("source", ""),
-            " ".join(
-                f"{f.get('name', '')} {f.get('description', '')} {f.get('type', '')}"
-                for f in data.get("fields", [])
-                if isinstance(f, dict)
-            ),
-        ]).lower()
+        searchable = " ".join(
+            [
+                data.get("name", ""),
+                data.get("description", ""),
+                data.get("source", ""),
+                " ".join(
+                    f"{f.get('name', '')} {f.get('description', '')} {f.get('type', '')}"
+                    for f in data.get("fields", [])
+                    if isinstance(f, dict)
+                ),
+            ]
+        ).lower()
         if keyword_lower in searchable:
             matches.append(_yaml_to_schema(data, full_path))
     return matches

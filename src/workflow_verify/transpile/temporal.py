@@ -110,8 +110,9 @@ def _emit_activity(step: Step, prev_output_schema: str | None, workflow: Workflo
         field_condition = _translate_guard_condition(guard.condition)
         if guard.on_fail == "skip":
             lines.append(f"    if not ({field_condition}):")
-            lines.append(f'        activity.logger.info("Guard failed: {guard.condition} — skipping")')
-            lines.append(f"        return input  # type: ignore[return-value]")
+            msg = f"Guard failed: {guard.condition} — skipping"
+            lines.append(f'        activity.logger.info("{msg}")')
+            lines.append("        return input  # type: ignore[return-value]")
         elif guard.on_fail == "error":
             lines.append(f"    if not ({field_condition}):")
             lines.append(f'        raise ApplicationError("Guard failed: {guard.condition}")')
@@ -145,21 +146,15 @@ def _emit_workflow_class(workflow: Workflow) -> str:
     for i, step in enumerate(workflow.steps):
         func_name = _to_snake(step.name)
         if i == 0:
-            lines.append(
-                f"        step{i + 1} = await workflow.execute_activity("
-            )
+            lines.append(f"        step{i + 1} = await workflow.execute_activity(")
             lines.append(f"            {func_name},")
-            lines.append(f"            input,")
+            lines.append("            input,")
         else:
-            lines.append(
-                f"        step{i + 1} = await workflow.execute_activity("
-            )
+            lines.append(f"        step{i + 1} = await workflow.execute_activity(")
             lines.append(f"            {func_name},")
             lines.append(f"            step{i},")
 
-        lines.append(
-            f"            start_to_close_timeout=timedelta(seconds=60),"
-        )
+        lines.append("            start_to_close_timeout=timedelta(seconds=60),")
         lines.append("        )")
 
     if workflow.steps:
@@ -221,9 +216,9 @@ def transpile_temporal(workflow: Workflow) -> TranspileResult:
         filename=filename,
         dependencies=["temporalio"],
         instructions=(
-            f"1. pip install temporalio\n"
-            f"2. Fill in the TODO sections in each activity function\n"
-            f"3. Register activities and workflow with a Temporal worker\n"
-            f"4. Start the workflow via a Temporal client"
+            "1. pip install temporalio\n"
+            "2. Fill in the TODO sections in each activity function\n"
+            "3. Register activities and workflow with a Temporal worker\n"
+            "4. Start the workflow via a Temporal client"
         ),
     )

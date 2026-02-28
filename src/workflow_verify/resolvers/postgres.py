@@ -95,14 +95,12 @@ class PostgresResolver(SchemaResolver):
             raise SchemaResolveError(
                 "asyncpg package required for PostgreSQL resolver. "
                 "Install with: pip install asyncpg"
-            )
+            ) from None
 
         try:
             conn = await asyncpg.connect(dsn)
         except Exception as e:
-            raise SchemaResolveError(
-                f"Failed to connect to PostgreSQL: {e}"
-            )
+            raise SchemaResolveError(f"Failed to connect to PostgreSQL: {e}") from e
 
         try:
             rows = await conn.fetch(
@@ -119,14 +117,12 @@ class PostgresResolver(SchemaResolver):
         except Exception as e:
             raise SchemaResolveError(
                 f"Failed to query information_schema for '{object_type}': {e}"
-            )
+            ) from e
         finally:
             await conn.close()
 
         if not rows:
-            raise SchemaResolveError(
-                f"Table '{object_type}' not found or has no columns."
-            )
+            raise SchemaResolveError(f"Table '{object_type}' not found or has no columns.")
 
         return self._parse_columns(rows, object_type)
 

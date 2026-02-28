@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
+from typing import Any
 
 from workflow_verify.ast.models import Schema
 from workflow_verify.ast.types import WFType
@@ -43,15 +44,19 @@ class SchemaResolveError(Exception):
     """Raised when a resolver fails to fetch or parse a live schema."""
 
 
-async def http_get(url: str, headers: dict | None = None, auth: tuple | None = None, params: dict | None = None) -> Any:
+async def http_get(
+    url: str,
+    headers: dict | None = None,
+    auth: tuple | None = None,
+    params: dict | None = None,
+) -> Any:
     """Shared HTTP GET helper. Raises SchemaResolveError if httpx is missing."""
     try:
         import httpx
     except ImportError:
         raise SchemaResolveError(
-            "httpx package required for live resolvers. "
-            "Install with: pip install httpx"
-        )
+            "httpx package required for live resolvers. Install with: pip install httpx"
+        ) from None
     async with httpx.AsyncClient() as client:
         return await client.get(url, headers=headers, auth=auth, params=params)
 

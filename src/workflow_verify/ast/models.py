@@ -19,7 +19,11 @@ class FieldDef(BaseModel):
     name: str
     type: AnyWFType
     description: str = ""
-    validate_expr: str | None = Field(default=None, serialization_alias="validate", validation_alias="validate")
+    validate_expr: str | None = Field(
+        default=None,
+        serialization_alias="validate",
+        validation_alias="validate",
+    )
 
 
 class Schema(BaseModel):

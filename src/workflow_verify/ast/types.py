@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from enum import Enum
-from typing import Annotated, Union
+from typing import Annotated
 
 from pydantic import BaseModel, Field
 
@@ -39,21 +39,21 @@ class ListType(BaseModel):
     """List[T] — a homogeneous list of a single element type."""
 
     kind: str = Field("List", frozen=True)
-    element: "AnyWFType"
+    element: AnyWFType
 
 
 class OptionalType(BaseModel):
     """Optional[T] — the value may be absent/null."""
 
     kind: str = Field("Optional", frozen=True)
-    inner: "AnyWFType"
+    inner: AnyWFType
 
 
 class RecordField(BaseModel):
     """A single field within a RecordType."""
 
     name: str
-    type: "AnyWFType"
+    type: AnyWFType
     required: bool = True
 
 
@@ -67,7 +67,7 @@ class RecordType(BaseModel):
 
 # Union of all types that can appear in a field definition
 AnyWFType = Annotated[
-    Union[WFType, ListType, OptionalType, RecordType],
+    WFType | ListType | OptionalType | RecordType,
     Field(discriminator=None),
 ]
 

@@ -63,7 +63,7 @@ class CRMZeroResolver(SchemaResolver):
         credentials: dict,
         include_custom: bool = True,
     ) -> Schema:
-        api_key = self._get_api_key(credentials)
+        _api_key = self._get_api_key(credentials)
 
         # TODO: Replace with actual CRM Zero API call.
         # Expected implementation:
@@ -82,9 +82,7 @@ class CRMZeroResolver(SchemaResolver):
             f"Object type: {object_type}"
         )
 
-    def _parse_fields(
-        self, fields_data: list[dict[str, Any]], object_type: str
-    ) -> Schema:
+    def _parse_fields(self, fields_data: list[dict[str, Any]], object_type: str) -> Schema:
         """Parse CRM Zero field definitions into a Schema."""
         fields: list[FieldDef] = []
         for f in fields_data:

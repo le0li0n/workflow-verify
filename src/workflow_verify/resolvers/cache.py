@@ -29,9 +29,7 @@ class SchemaCache:
         cred_hash = _hash_credentials(credentials)
         return f"{service}:{object_type}:{cred_hash}"
 
-    def get(
-        self, service: str, object_type: str, credentials: dict
-    ) -> Schema | None:
+    def get(self, service: str, object_type: str, credentials: dict) -> Schema | None:
         """Return cached schema if not expired, else None."""
         key = self._make_key(service, object_type, credentials)
         entry = self._cache.get(key)
@@ -43,9 +41,7 @@ class SchemaCache:
             return None
         return schema
 
-    def set(
-        self, service: str, object_type: str, credentials: dict, schema: Schema
-    ) -> None:
+    def set(self, service: str, object_type: str, credentials: dict, schema: Schema) -> None:
         """Cache a schema with the current timestamp."""
         key = self._make_key(service, object_type, credentials)
         self._cache[key] = (schema, time.time())

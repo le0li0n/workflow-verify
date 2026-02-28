@@ -41,9 +41,7 @@ class HubSpotResolver(SchemaResolver):
     def _get_token(self, credentials: dict) -> str:
         token = credentials.get("api_key") or credentials.get("access_token")
         if not token:
-            token = os.environ.get("HUBSPOT_API_KEY") or os.environ.get(
-                "HUBSPOT_ACCESS_TOKEN"
-            )
+            token = os.environ.get("HUBSPOT_API_KEY") or os.environ.get("HUBSPOT_ACCESS_TOKEN")
         if not token:
             raise SchemaResolveError(
                 "HubSpot credentials required. Provide 'api_key' or "
@@ -61,9 +59,7 @@ class HubSpotResolver(SchemaResolver):
         token = self._get_token(credentials)
         url = f"https://api.hubapi.com/crm/v3/properties/{object_type}"
 
-        response = await http_get(
-            url, headers={"Authorization": f"Bearer {token}"}
-        )
+        response = await http_get(url, headers={"Authorization": f"Bearer {token}"})
 
         if response.status_code == 401:
             raise SchemaResolveError(
@@ -75,9 +71,7 @@ class HubSpotResolver(SchemaResolver):
                 f"Available: {', '.join(self.supported_objects())}"
             )
         if response.status_code != 200:
-            raise SchemaResolveError(
-                f"HubSpot API error {response.status_code}: {response.text}"
-            )
+            raise SchemaResolveError(f"HubSpot API error {response.status_code}: {response.text}")
 
         data = response.json()
         return self._parse_properties(data, object_type, include_custom)

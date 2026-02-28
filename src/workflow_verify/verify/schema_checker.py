@@ -46,7 +46,11 @@ def check_schemas(workflow: Workflow) -> list[CheckResult]:
                             f"Schema '{schema.name}' has duplicate field name '{field.name}'."
                         ),
                         severity="error",
-                        suggestion=f"Remove or rename the duplicate '{field.name}' field in schema '{schema.name}'.",
+                        suggestion=(
+                            f"Remove or rename the duplicate "
+                            f"'{field.name}' field in schema "
+                            f"'{schema.name}'."
+                        ),
                     )
                 )
             field_names.add(field.name)
@@ -66,7 +70,9 @@ def check_schemas(workflow: Workflow) -> list[CheckResult]:
                             f"validation expression '{expr}' does not reference 'value'."
                         ),
                         severity="warning",
-                        suggestion="Validation expressions should reference 'value', e.g. 'value >= 0'.",
+                        suggestion=(
+                            "Validation expressions should reference 'value', e.g. 'value >= 0'."
+                        ),
                     )
                 )
 
@@ -114,9 +120,7 @@ def check_schemas(workflow: Workflow) -> list[CheckResult]:
                 passed=False,
                 check_type="schema",
                 step=None,
-                message=(
-                    f"Workflow input_schema '{workflow.input_schema}' does not exist."
-                ),
+                message=(f"Workflow input_schema '{workflow.input_schema}' does not exist."),
                 severity="error",
                 suggestion=(
                     f"Define a schema named '{workflow.input_schema}' or use one of: "
@@ -130,9 +134,7 @@ def check_schemas(workflow: Workflow) -> list[CheckResult]:
                 passed=False,
                 check_type="schema",
                 step=None,
-                message=(
-                    f"Workflow output_schema '{workflow.output_schema}' does not exist."
-                ),
+                message=(f"Workflow output_schema '{workflow.output_schema}' does not exist."),
                 severity="error",
                 suggestion=(
                     f"Define a schema named '{workflow.output_schema}' or use one of: "
@@ -144,16 +146,13 @@ def check_schemas(workflow: Workflow) -> list[CheckResult]:
     # Add passing checks for valid schemas
     for schema in workflow.schemas:
         if schema.name in schema_names:
-            has_errors = any(
-                not r.passed and schema.name in r.message for r in results
-            )
+            has_errors = any(not r.passed and schema.name in r.message for r in results)
             if not has_errors:
-                validate_count = sum(
-                    1 for f in schema.fields if f.validate_expr is not None
-                )
+                validate_count = sum(1 for f in schema.fields if f.validate_expr is not None)
                 detail = f"{len(schema.fields)} fields validated"
                 if validate_count:
-                    detail += f", {validate_count} validation rule{'s' if validate_count > 1 else ''}"
+                    rule_s = "s" if validate_count > 1 else ""
+                    detail += f", {validate_count} validation rule{rule_s}"
                 results.append(
                     CheckResult(
                         passed=True,

@@ -20,6 +20,7 @@ from __future__ import annotations
 import json
 import logging
 import sys
+from typing import Literal
 
 logger = logging.getLogger(__name__)
 
@@ -27,8 +28,7 @@ try:
     from mcp.server.fastmcp import FastMCP
 except ImportError:
     print(
-        "Error: mcp package required. Install with: "
-        "pip install 'workflow-verify[mcp]'",
+        "Error: mcp package required. Install with: pip install 'workflow-verify[mcp]'",
         file=sys.stderr,
     )
     sys.exit(1)
@@ -87,10 +87,7 @@ def verify_workflow(
             {"message": c.message, "step": c.step, "suggestion": c.suggestion}
             for c in result.errors
         ],
-        "warnings": [
-            {"message": c.message, "step": c.step}
-            for c in result.warnings
-        ],
+        "warnings": [{"message": c.message, "step": c.step} for c in result.warnings],
         "effects": [
             {"kind": e.kind, "target": e.target, "description": e.description}
             for e in result.effects_manifest
@@ -146,18 +143,23 @@ async def generate_verified_workflow(
             return json.dumps({"error": f"Invalid schemas_json: {e}"})
 
     try:
+        llm_provider: Literal["anthropic", "openai"] = (
+            "anthropic" if llm == "anthropic" else "openai"
+        )
         result = await generate_and_verify(
             prompt=prompt,
             schemas=schemas,
             max_attempts=max_attempts,
-            llm=llm,
+            llm=llm_provider,
             target=target,
         )
     except ImportError as e:
-        return json.dumps({
-            "error": str(e),
-            "hint": f"Install the LLM provider: pip install {llm}",
-        })
+        return json.dumps(
+            {
+                "error": str(e),
+                "hint": f"Install the LLM provider: pip install {llm}",
+            }
+        )
     except Exception as e:
         return json.dumps({"error": f"Generation failed: {e}"})
 
@@ -167,9 +169,7 @@ async def generate_verified_workflow(
     }
 
     if result.workflow:
-        output["workflow"] = json.loads(
-            result.workflow.model_dump_json()
-        )
+        output["workflow"] = json.loads(result.workflow.model_dump_json())
 
     if result.verification:
         output["verification"] = {

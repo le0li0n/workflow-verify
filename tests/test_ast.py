@@ -3,8 +3,6 @@
 import json
 from pathlib import Path
 
-import pytest
-
 from workflow_verify.ast.models import (
     Effect,
     FieldDef,
@@ -18,7 +16,6 @@ from workflow_verify.ast.schema import (
     get_workflow_tool_definition,
 )
 from workflow_verify.ast.types import (
-    AnyWFType,
     ListType,
     OptionalType,
     RecordField,

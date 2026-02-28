@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import asyncio
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Literal
 
 # --- AST models & types ---
 from workflow_verify.ast.models import (
@@ -76,7 +76,7 @@ async def run(
     prompt: str,
     target: str = "python",
     *,
-    llm: str = "anthropic",
+    llm: Literal["anthropic", "openai"] = "anthropic",
     client: LLMClient | None = None,
     schemas: list[Schema] | None = None,
     max_attempts: int = 3,
@@ -107,10 +107,8 @@ async def run(
         client=client,
         target=target,
     )
-    if not result.converged:
-        raise RuntimeError(
-            f"Failed to generate a valid workflow after {max_attempts} attempts"
-        )
+    if not result.converged or result.transpiled is None:
+        raise RuntimeError(f"Failed to generate a valid workflow after {max_attempts} attempts")
     return result.transpiled.code
 
 
@@ -118,7 +116,7 @@ def run_sync(
     prompt: str,
     target: str = "python",
     *,
-    llm: str = "anthropic",
+    llm: Literal["anthropic", "openai"] = "anthropic",
     client: LLMClient | None = None,
     schemas: list[Schema] | None = None,
     max_attempts: int = 3,

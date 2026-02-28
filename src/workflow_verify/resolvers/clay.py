@@ -65,7 +65,7 @@ class ClayResolver(SchemaResolver):
         credentials: dict,
         include_custom: bool = True,
     ) -> Schema:
-        api_key = self._get_api_key(credentials)
+        _api_key = self._get_api_key(credentials)
 
         # TODO: Replace with actual Clay API call when endpoint is available.
         # Expected implementation:
@@ -84,9 +84,7 @@ class ClayResolver(SchemaResolver):
             f"Table ID: {object_type}"
         )
 
-    def _parse_columns(
-        self, columns: list[dict[str, Any]], table_id: str
-    ) -> Schema:
+    def _parse_columns(self, columns: list[dict[str, Any]], table_id: str) -> Schema:
         """Parse Clay column definitions into a Schema.
 
         Expected column format:

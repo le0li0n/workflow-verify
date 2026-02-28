@@ -5,11 +5,11 @@ from __future__ import annotations
 import asyncio
 import time
 from typing import Any
-from unittest.mock import AsyncMock, MagicMock, patch
+from unittest.mock import AsyncMock, patch
 
 import pytest
 
-from workflow_verify.ast.models import FieldDef, Schema, Step, Workflow, Effect
+from workflow_verify.ast.models import Effect, FieldDef, Schema, Step, Workflow
 from workflow_verify.ast.types import WFType
 from workflow_verify.resolvers import (
     SchemaResolveError,
@@ -19,13 +19,11 @@ from workflow_verify.resolvers import (
     list_resolvers,
     resolve_schema,
 )
-from workflow_verify.resolvers.base import SchemaResolver
 from workflow_verify.resolvers.cache import SchemaCache
 from workflow_verify.resolvers.hubspot import HubSpotResolver
 from workflow_verify.resolvers.salesforce import SalesforceResolver
 from workflow_verify.resolvers.stripe import StripeResolver
 from workflow_verify.verify.engine import verify
-
 
 # --- Mock HTTP response helper ---
 
@@ -134,9 +132,7 @@ class TestHubSpotResolver:
             "workflow_verify.resolvers.hubspot.http_get",
             new=AsyncMock(return_value=response),
         ):
-            schema = asyncio.run(
-                resolver.resolve("contacts", {"api_key": "test-key"})
-            )
+            schema = asyncio.run(resolver.resolve("contacts", {"api_key": "test-key"}))
 
         assert schema.name == "HubSpotContacts"
         assert len(schema.fields) == 5
@@ -157,9 +153,7 @@ class TestHubSpotResolver:
             new=AsyncMock(return_value=response),
         ):
             schema = asyncio.run(
-                resolver.resolve(
-                    "contacts", {"api_key": "test-key"}, include_custom=False
-                )
+                resolver.resolve("contacts", {"api_key": "test-key"}, include_custom=False)
             )
 
         assert len(schema.fields) == 4
@@ -174,9 +168,7 @@ class TestHubSpotResolver:
             new=AsyncMock(return_value=response),
         ):
             with pytest.raises(SchemaResolveError, match="authentication failed"):
-                asyncio.run(
-                    resolver.resolve("contacts", {"api_key": "bad-key"})
-                )
+                asyncio.run(resolver.resolve("contacts", {"api_key": "bad-key"}))
 
     def test_missing_credentials_raises(self):
         resolver = HubSpotResolver()
@@ -251,9 +243,7 @@ class TestSalesforceResolver:
         resolver = SalesforceResolver()
         with patch.dict("os.environ", {}, clear=True):
             with pytest.raises(SchemaResolveError, match="instance_url"):
-                asyncio.run(
-                    resolver.resolve("Lead", {"access_token": "token"})
-                )
+                asyncio.run(resolver.resolve("Lead", {"access_token": "token"}))
 
 
 # --- Stripe resolver tests ---
@@ -266,9 +256,7 @@ class TestStripeResolver:
         resolver = StripeResolver()
         # No API call needed for base fields — Stripe uses known schemas
         schema = asyncio.run(
-            resolver.resolve(
-                "customer", {"api_key": "sk_test_xxx"}, include_custom=False
-            )
+            resolver.resolve("customer", {"api_key": "sk_test_xxx"}, include_custom=False)
         )
 
         assert schema.name == "StripeCustomer"
@@ -279,9 +267,7 @@ class TestStripeResolver:
     def test_resolve_unknown_object_raises(self):
         resolver = StripeResolver()
         with pytest.raises(SchemaResolveError, match="not supported"):
-            asyncio.run(
-                resolver.resolve("widget", {"api_key": "sk_test_xxx"})
-            )
+            asyncio.run(resolver.resolve("widget", {"api_key": "sk_test_xxx"}))
 
     def test_supported_objects(self):
         resolver = StripeResolver()
@@ -301,16 +287,12 @@ class TestStubResolvers:
     def test_clay_raises_not_implemented(self):
         resolver = get_resolver("clay")
         with pytest.raises(SchemaResolveError, match="not yet implemented"):
-            asyncio.run(
-                resolver.resolve("tbl_123", {"api_key": "test"})
-            )
+            asyncio.run(resolver.resolve("tbl_123", {"api_key": "test"}))
 
     def test_crmzero_raises_not_implemented(self):
         resolver = get_resolver("crmzero")
         with pytest.raises(SchemaResolveError, match="not yet implemented"):
-            asyncio.run(
-                resolver.resolve("contacts", {"api_key": "test"})
-            )
+            asyncio.run(resolver.resolve("contacts", {"api_key": "test"}))
 
     def test_clay_type_map(self):
         resolver = get_resolver("clay")
@@ -548,7 +530,9 @@ class TestResolvedSchemaVerification:
         )
 
         result2 = verify(wf2)
-        assert result2.passed, f"Resolved schema workflow failed: {[e.message for e in result2.errors]}"
+        assert result2.passed, (
+            f"Resolved schema workflow failed: {[e.message for e in result2.errors]}"
+        )
 
     def test_resolved_schema_with_custom_fields(self):
         """A workflow that uses custom fields only available via dynamic resolution."""

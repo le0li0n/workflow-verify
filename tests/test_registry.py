@@ -1,6 +1,5 @@
 """Tests for the schema registry."""
 
-import json
 from pathlib import Path
 
 import pytest
@@ -200,7 +199,7 @@ class TestRegistryInWorkflow:
         """Build a workflow using registry schemas and verify it passes."""
         lead = load_schema("crm/salesforce_lead")
         clearbit = load_schema("enrichment/clearbit_person")
-        email = load_schema("communication/email_message")
+        _email = load_schema("communication/email_message")
 
         # Build a simple pipeline: fetch lead -> enrich -> send email
         # We need output schemas that are compatible with the next step's input
@@ -266,7 +265,6 @@ class TestRegistryInWorkflow:
 
         result = verify(workflow)
         assert result.passed, (
-            f"Workflow with registry schemas failed: "
-            f"{[e.message for e in result.errors]}"
+            f"Workflow with registry schemas failed: {[e.message for e in result.errors]}"
         )
         assert len(result.effects_manifest) == 3

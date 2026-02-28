@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import re
 
-from workflow_verify.ast.models import Schema, Workflow
+from workflow_verify.ast.models import Workflow
 from workflow_verify.ast.types import WFType
 
 from .results import CheckResult
@@ -124,8 +124,9 @@ def check_guards(workflow: Workflow) -> list[CheckResult]:
                             ),
                             severity="warning",
                             suggestion=(
-                                f"Numeric comparisons are intended for Int/Float fields. "
-                                f"Consider using '==' or 'is not null' for {field_type.value} fields."
+                                f"Numeric comparisons are intended for "
+                                f"Int/Float fields. Consider using '==' or "
+                                f"'is not null' for {field_type.value} fields."
                             ),
                         )
                     )
@@ -155,13 +156,11 @@ def check_guards(workflow: Workflow) -> list[CheckResult]:
                     check_type="guard",
                     step=step.name,
                     message=(
-                        f"Step '{step.name}' has write/delete effects but no "
-                        f"guard conditions."
+                        f"Step '{step.name}' has write/delete effects but no guard conditions."
                     ),
                     severity="warning",
                     suggestion=(
-                        f"Add a guard to step '{step.name}' to prevent "
-                        f"unprotected writes."
+                        f"Add a guard to step '{step.name}' to prevent unprotected writes."
                     ),
                 )
             )

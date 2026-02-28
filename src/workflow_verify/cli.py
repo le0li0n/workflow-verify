@@ -18,17 +18,24 @@ def _build_parser() -> argparse.ArgumentParser:
     p_verify = subparsers.add_parser("verify", help="Verify a workflow JSON file")
     p_verify.add_argument("file", help="Path to workflow JSON file")
     p_verify.add_argument(
-        "--json", action="store_true", dest="json_output", help="Output as JSON",
+        "--json",
+        action="store_true",
+        dest="json_output",
+        help="Output as JSON",
     )
     p_verify.add_argument(
-        "--no-strict", action="store_true", help="Treat undeclared effects as warnings",
+        "--no-strict",
+        action="store_true",
+        help="Treat undeclared effects as warnings",
     )
 
     # --- transpile ---
     p_transpile = subparsers.add_parser("transpile", help="Verify and transpile a workflow")
     p_transpile.add_argument("file", help="Path to workflow JSON file")
     p_transpile.add_argument(
-        "-t", "--target", required=True,
+        "-t",
+        "--target",
+        required=True,
         choices=["python", "typescript", "temporal"],
         help="Transpile target language",
     )
@@ -51,17 +58,22 @@ def _build_parser() -> argparse.ArgumentParser:
     p_generate = subparsers.add_parser("generate", help="Generate a workflow from a prompt")
     p_generate.add_argument("prompt", help="Natural language workflow description")
     p_generate.add_argument(
-        "-t", "--target", default="python",
+        "-t",
+        "--target",
+        default="python",
         choices=["python", "typescript", "temporal"],
         help="Transpile target (default: python)",
     )
     p_generate.add_argument(
-        "--llm", default="anthropic",
+        "--llm",
+        default="anthropic",
         choices=["anthropic", "openai"],
         help="LLM provider (default: anthropic)",
     )
     p_generate.add_argument(
-        "--max-attempts", type=int, default=3,
+        "--max-attempts",
+        type=int,
+        default=3,
         help="Max correction attempts (default: 3)",
     )
 

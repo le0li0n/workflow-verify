@@ -56,9 +56,7 @@ def _type_to_zod(t: AnyWFType) -> str:
     elif isinstance(t, RecordType):
         if not t.fields:
             return "z.record(z.unknown())"
-        fields = ", ".join(
-            f"  {f.name}: {_type_to_zod(f.type)}" for f in t.fields
-        )
+        fields = ", ".join(f"  {f.name}: {_type_to_zod(f.type)}" for f in t.fields)
         return f"z.object({{\n{fields}\n}})"
     return "z.unknown()"
 
@@ -88,39 +86,35 @@ def _emit_step(step: Step, prev_output_schema: str | None, workflow: Workflow) -
     lines: list[str] = []
 
     # Function signature
-    lines.append(
-        f"async function {func_name}("
-        f"input: {input_type}"
-        f"): Promise<{output_type}> {{"
-    )
+    lines.append(f"async function {func_name}(input: {input_type}): Promise<{output_type}> {{")
 
     # Effect comments
     if step.effects:
-        effects_str = ", ".join(
-            f"{e.kind.upper()}:{e.target}" for e in step.effects
-        )
+        effects_str = ", ".join(f"{e.kind.upper()}:{e.target}" for e in step.effects)
         lines.append(f"  // Effects: {effects_str}")
 
     # Guard checks
     for guard in step.guards:
         if guard.on_fail == "skip":
             lines.append(f"  if (!({guard.condition})) {{")
-            lines.append(f"    console.log(\"Guard failed: {guard.condition} — skipping\");")
+            lines.append(f'    console.log("Guard failed: {guard.condition} — skipping");')
             lines.append(f"    return input as unknown as {output_type};")
             lines.append("  }")
         elif guard.on_fail == "error":
             lines.append(f"  if (!({guard.condition})) {{")
-            lines.append(f"    throw new Error(\"Guard failed: {guard.condition}\");")
+            lines.append(f'    throw new Error("Guard failed: {guard.condition}");')
             lines.append("  }")
         elif guard.on_fail == "default":
-            default_val = repr(guard.default_value) if guard.default_value is not None else "undefined"
+            default_val = (
+                repr(guard.default_value) if guard.default_value is not None else "undefined"
+            )
             lines.append(f"  if (!({guard.condition})) {{")
             lines.append(f"    return {default_val} as unknown as {output_type};")
             lines.append("  }")
 
     # Body placeholder
     lines.append(f"  // TODO: Implement {step.description or step.name}")
-    lines.append(f"  throw new Error(\"Not implemented: {func_name}\");")
+    lines.append(f'  throw new Error("Not implemented: {func_name}");')
     lines.append("}")
 
     return "\n".join(lines)
@@ -132,11 +126,7 @@ def _emit_pipeline(workflow: Workflow) -> str:
     output_type = _to_pascal(workflow.output_schema)
 
     lines: list[str] = []
-    lines.append(
-        f"async function runWorkflow("
-        f"input: {input_type}"
-        f"): Promise<{output_type}> {{"
-    )
+    lines.append(f"async function runWorkflow(input: {input_type}): Promise<{output_type}> {{")
 
     for i, step in enumerate(workflow.steps):
         func_name = _to_camel(step.name)
@@ -194,8 +184,8 @@ def transpile_typescript(workflow: Workflow) -> TranspileResult:
         filename=filename,
         dependencies=["zod"],
         instructions=(
-            f"1. npm install zod\n"
-            f"2. Fill in the TODO sections in each step function\n"
-            f"3. Import and call runWorkflow() with your input data"
+            "1. npm install zod\n"
+            "2. Fill in the TODO sections in each step function\n"
+            "3. Import and call runWorkflow() with your input data"
         ),
     )

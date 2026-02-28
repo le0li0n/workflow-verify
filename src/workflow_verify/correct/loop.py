@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import json
 import logging
 from typing import Any, Literal, Protocol
 
@@ -91,9 +90,9 @@ def format_correction_request(
 
     # Add warnings as additional context
     if result.warnings:
-        instruction_parts.append(
-            f"Additionally, there are {len(result.warnings)} warning{'s' if len(result.warnings) != 1 else ''}:"
-        )
+        warn_count = len(result.warnings)
+        warn_s = "s" if warn_count != 1 else ""
+        instruction_parts.append(f"Additionally, there are {warn_count} warning{warn_s}:")
         for warning in result.warnings:
             step_info = f" in step '{warning.step}'" if warning.step else ""
             instruction_parts.append(f"  - {warning.message}")
@@ -145,7 +144,7 @@ class AnthropicClient:
         except ImportError:
             raise ImportError(
                 "anthropic package required. Install with: pip install anthropic"
-            )
+            ) from None
         self._client = anthropic.AsyncAnthropic()
 
     async def generate_workflow(
@@ -153,7 +152,6 @@ class AnthropicClient:
         prompt: str,
         schema: dict,
     ) -> dict[str, Any]:
-        import anthropic
 
         response = await self._client.messages.create(
             model="claude-sonnet-4-20250514",
@@ -174,7 +172,7 @@ class AnthropicClient:
 
         for block in response.content:
             if block.type == "tool_use":
-                return block.input
+                return dict(block.input)  # type: ignore[arg-type]
 
         raise ValueError("No tool_use block in Anthropic response")
 
@@ -186,9 +184,7 @@ class OpenAIClient:
         try:
             import openai
         except ImportError:
-            raise ImportError(
-                "openai package required. Install with: pip install openai"
-            )
+            raise ImportError("openai package required. Install with: pip install openai") from None
         self._client = openai.AsyncOpenAI()
 
     async def generate_workflow(
@@ -204,7 +200,8 @@ class OpenAIClient:
 
         import json as json_mod
 
-        return json_mod.loads(response.output_text)
+        result: dict[str, Any] = json_mod.loads(response.output_text)
+        return result
 
 
 def _make_client(llm: str) -> LLMClient:
@@ -335,9 +332,7 @@ async def generate_and_verify(
             )
 
         # Failed — format correction and retry
-        logger.info(
-            f"Attempt {attempt_num} failed with {len(result.errors)} errors"
-        )
+        logger.info(f"Attempt {attempt_num} failed with {len(result.errors)} errors")
         correction = format_correction_request(prompt, workflow, result)
         attempts.append(
             Attempt(

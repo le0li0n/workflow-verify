@@ -61,12 +61,8 @@ class SalesforceResolver(SchemaResolver):
         return SALESFORCE_TYPE_MAP.get(service_type.lower(), WFType.TEXT)
 
     def _get_credentials(self, credentials: dict) -> tuple[str, str]:
-        token = credentials.get("access_token") or os.environ.get(
-            "SALESFORCE_ACCESS_TOKEN"
-        )
-        instance_url = credentials.get("instance_url") or os.environ.get(
-            "SALESFORCE_INSTANCE_URL"
-        )
+        token = credentials.get("access_token") or os.environ.get("SALESFORCE_ACCESS_TOKEN")
+        instance_url = credentials.get("instance_url") or os.environ.get("SALESFORCE_INSTANCE_URL")
         if not token:
             raise SchemaResolveError(
                 "Salesforce access_token required. Provide in credentials "
@@ -88,14 +84,10 @@ class SalesforceResolver(SchemaResolver):
         token, instance_url = self._get_credentials(credentials)
         url = f"{instance_url}/services/data/v59.0/sobjects/{object_type}/describe/"
 
-        response = await http_get(
-            url, headers={"Authorization": f"Bearer {token}"}
-        )
+        response = await http_get(url, headers={"Authorization": f"Bearer {token}"})
 
         if response.status_code == 401:
-            raise SchemaResolveError(
-                "Salesforce authentication failed. Check your access token."
-            )
+            raise SchemaResolveError("Salesforce authentication failed. Check your access token.")
         if response.status_code == 404:
             raise SchemaResolveError(
                 f"Salesforce object '{object_type}' not found. "

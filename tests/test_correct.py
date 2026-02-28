@@ -5,13 +5,9 @@ import json
 from pathlib import Path
 from typing import Any
 
-import pytest
-
 from workflow_verify.ast.models import Workflow
 from workflow_verify.correct.loop import (
-    Attempt,
     CorrectionRequest,
-    CorrectionResult,
     format_correction_request,
     generate_and_verify,
 )
@@ -249,7 +245,7 @@ class TestGenerateAndVerifyLoop:
         valid_ast = load_fixture_dict("valid_crm_pipeline.json")
         client = MockLLMClient([invalid_ast, valid_ast])
 
-        result = asyncio.run(
+        _result = asyncio.run(
             generate_and_verify(
                 "Build a pipeline",
                 client=client,
@@ -359,7 +355,7 @@ class TestGenerateAndVerifyLoop:
         valid_ast = load_fixture_dict("valid_crm_pipeline.json")
         client = MockLLMClient([valid_ast])
 
-        result = asyncio.run(
+        _result = asyncio.run(
             generate_and_verify(
                 "Build a pipeline",
                 schemas=schemas,
@@ -391,7 +387,7 @@ class TestCorrectionEdgeCases:
     def test_empty_errors_still_formats(self):
         """Edge case: format_correction_request with empty errors list."""
         wf = load_fixture("valid_crm_pipeline.json")
-        result = verify(wf)
+        _result = verify(wf)
         # Force empty errors
         from workflow_verify.verify.results import VerificationResult
 
@@ -422,9 +418,7 @@ class TestCorrectionEdgeCases:
         valid_ast = load_fixture_dict("valid_crm_pipeline.json")
         client = MockLLMClient([valid_ast])
 
-        result = asyncio.run(
-            generate_and_verify("Test", client=client, max_attempts=1)
-        )
+        result = asyncio.run(generate_and_verify("Test", client=client, max_attempts=1))
 
         json_str = result.model_dump_json()
         parsed = json.loads(json_str)

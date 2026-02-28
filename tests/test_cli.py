@@ -6,8 +6,6 @@ import sys
 import tempfile
 from pathlib import Path
 
-import pytest
-
 FIXTURES = Path(__file__).parent / "fixtures"
 
 
@@ -115,7 +113,14 @@ class TestTranspileCommand:
         with tempfile.NamedTemporaryFile(suffix=".py", delete=False) as f:
             outpath = f.name
         try:
-            r = run_cli("transpile", str(FIXTURES / "valid_crm_pipeline.json"), "-t", "python", "-o", outpath)
+            r = run_cli(
+                "transpile",
+                str(FIXTURES / "valid_crm_pipeline.json"),
+                "-t",
+                "python",
+                "-o",
+                outpath,
+            )
             assert r.returncode == 0
             content = Path(outpath).read_text()
             assert len(content) > 0

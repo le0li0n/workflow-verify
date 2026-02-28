@@ -18,9 +18,24 @@ EFFECT_KEYWORDS: dict[str, list[str]] = {
 
 # Known external service names
 _SERVICE_NAMES = [
-    "salesforce", "hubspot", "stripe", "twilio", "sendgrid", "slack",
-    "clearbit", "segment", "snowflake", "bigquery", "postgres", "mysql",
-    "redis", "dynamodb", "s3", "firebase", "supabase", "airtable",
+    "salesforce",
+    "hubspot",
+    "stripe",
+    "twilio",
+    "sendgrid",
+    "slack",
+    "clearbit",
+    "segment",
+    "snowflake",
+    "bigquery",
+    "postgres",
+    "mysql",
+    "redis",
+    "dynamodb",
+    "s3",
+    "firebase",
+    "supabase",
+    "airtable",
 ]
 
 
@@ -42,7 +57,7 @@ def _detect_services(text: str) -> list[str]:
     return [s for s in _SERVICE_NAMES if s in text_lower]
 
 
-def check_effects(workflow: Workflow) -> list[CheckResult]:
+def check_effects(workflow: Workflow) -> tuple[list[CheckResult], list[Effect]]:
     """Verify side effects are properly declared across all steps."""
     results: list[CheckResult] = []
     all_effects: list[Effect] = []
@@ -156,9 +171,7 @@ def check_effects(workflow: Workflow) -> list[CheckResult]:
 
     # 1. Produce effects manifest (info-level pass result)
     if all_effects:
-        manifest = ", ".join(
-            f"{e.kind.upper()}:{e.target}" for e in all_effects
-        )
+        manifest = ", ".join(f"{e.kind.upper()}:{e.target}" for e in all_effects)
         results.append(
             CheckResult(
                 passed=True,

@@ -197,12 +197,14 @@ class TestGenerateVerifiedWorkflow:
             async def generate_workflow(self, prompt: str, schema: dict) -> dict[str, Any]:
                 return valid_data
 
-        schemas = json_mod.dumps([
-            {
-                "name": "TestSchema",
-                "fields": [{"name": "id", "type": "Text", "description": "ID"}],
-            }
-        ])
+        schemas = json_mod.dumps(
+            [
+                {
+                    "name": "TestSchema",
+                    "fields": [{"name": "id", "type": "Text", "description": "ID"}],
+                }
+            ]
+        )
 
         with patch("workflow_verify.correct.loop._make_client", return_value=MockClient()):
             result_str = await generate_verified_workflow(

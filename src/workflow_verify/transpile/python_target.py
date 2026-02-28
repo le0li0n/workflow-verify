@@ -104,7 +104,7 @@ def _emit_step(step: Step, prev_output_schema: str | None, workflow: Workflow) -
     # Effect decorator-style comments
     if step.effects:
         for effect in step.effects:
-            lines.append(f"# @effect({effect.kind}, \"{effect.target}\")")
+            lines.append(f'# @effect({effect.kind}, "{effect.target}")')
 
     # Function signature
     lines.append(f"async def {func_name}(input: {input_type}) -> {output_type}:")
@@ -117,7 +117,7 @@ def _emit_step(step: Step, prev_output_schema: str | None, workflow: Workflow) -
         if guard.on_fail == "skip":
             lines.append(f"    if not ({field_condition}):")
             lines.append(f'        print("Guard failed: {guard.condition} — skipping")')
-            lines.append(f"        return input  # type: ignore[return-value]")
+            lines.append("        return input  # type: ignore[return-value]")
         elif guard.on_fail == "error":
             lines.append(f"    if not ({field_condition}):")
             lines.append(f'        raise ValueError("Guard failed: {guard.condition}")')
@@ -184,7 +184,7 @@ def transpile_python(workflow: Workflow) -> TranspileResult:
         needs_url = needs_url or nu
 
     # Imports
-    parts.append('"""Auto-generated workflow: {name}"""'.format(name=workflow.name))
+    parts.append(f'"""Auto-generated workflow: {workflow.name}"""')
     parts.append("")
     parts.append("from __future__ import annotations")
     parts.append("")

@@ -3,8 +3,6 @@
 import json
 from pathlib import Path
 
-import pytest
-
 from workflow_verify.ast.models import Workflow
 from workflow_verify.verify.engine import verify
 
@@ -54,7 +52,9 @@ class TestValidWorkflows:
             "enrich_contact" in msg and ("effect" in msg.lower() or "clearbit" in msg.lower())
             for msg in warning_messages
         )
-        assert has_effect_warning, f"Expected undeclared effect warning for enrich_contact. Warnings: {warning_messages}"
+        assert has_effect_warning, (
+            f"Expected undeclared effect warning for enrich_contact. Warnings: {warning_messages}"
+        )
 
     def test_valid_with_warnings_has_unguarded_write_warning(self):
         """Step 2 has a write effect but no guard."""
@@ -143,9 +143,11 @@ class TestInvalidGuardBadField:
         guard_errors = [e for e in result.errors if e.check_type == "guard"]
         assert len(guard_errors) > 0
         assert any(
-            "score" in e.message and "filter_leads" in (e.step or "")
-            for e in guard_errors
-        ), f"Expected guard error about 'score' in 'filter_leads'. Errors: {[e.message for e in guard_errors]}"
+            "score" in e.message and "filter_leads" in (e.step or "") for e in guard_errors
+        ), (
+            "Expected guard error about 'score' in 'filter_leads'. "
+            f"Errors: {[e.message for e in guard_errors]}"
+        )
 
     def test_error_lists_available_fields(self):
         wf = load_fixture("invalid_guard_bad_field.json")
@@ -168,9 +170,10 @@ class TestInvalidUndeclaredEffect:
         wf = load_fixture("invalid_undeclared_effect.json")
         result = verify(wf)
         effect_warnings = [w for w in result.warnings if w.check_type == "effect"]
-        assert any(
-            w.step == "search_external" for w in effect_warnings
-        ), f"Expected warning for 'search_external'. Warnings: {[w.message for w in effect_warnings]}"
+        assert any(w.step == "search_external" for w in effect_warnings), (
+            "Expected warning for 'search_external'. "
+            f"Warnings: {[w.message for w in effect_warnings]}"
+        )
 
 
 # --- Trace tests ---
@@ -241,6 +244,4 @@ class TestEngineEdgeCases:
         wf = load_fixture("invalid_guard_bad_field.json")
         result = verify(wf)
         for error in result.errors:
-            assert error.suggestion is not None, (
-                f"Error missing suggestion: {error.message}"
-            )
+            assert error.suggestion is not None, f"Error missing suggestion: {error.message}"

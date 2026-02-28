@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from workflow_verify.ast.models import Schema, Workflow
-from workflow_verify.ast.types import is_compatible, RecordField, RecordType
+from workflow_verify.ast.types import RecordField, RecordType, is_compatible
 
 from .results import CheckResult
 
@@ -11,17 +11,17 @@ from .results import CheckResult
 def _schema_to_record(schema: Schema) -> RecordType:
     """Convert an AST Schema to a RecordType for compatibility checking."""
     return RecordType(
+        kind="Record",
         name=schema.name,
-        fields=[
-            RecordField(name=f.name, type=f.type, required=True)
-            for f in schema.fields
-        ],
+        fields=[RecordField(name=f.name, type=f.type, required=True) for f in schema.fields],
     )
 
 
 def _format_fields(schema: Schema) -> str:
     """Format a schema's fields for error messages."""
-    return ", ".join(f"{f.name} ({f.type.value if hasattr(f.type, 'value') else f.type})" for f in schema.fields)
+    return ", ".join(
+        f"{f.name} ({f.type.value if hasattr(f.type, 'value') else f.type})" for f in schema.fields
+    )
 
 
 def check_type_flow(workflow: Workflow) -> list[CheckResult]:
@@ -52,7 +52,7 @@ def check_type_flow(workflow: Workflow) -> list[CheckResult]:
 
     # 1 & 2. Schema existence checks (already covered by schema_checker, but
     # we need the resolved schemas to proceed — bail on missing ones)
-    for i, step in enumerate(workflow.steps):
+    for _i, step in enumerate(workflow.steps):
         if step.output_schema not in schema_map:
             results.append(
                 CheckResult(
@@ -91,7 +91,10 @@ def check_type_flow(workflow: Workflow) -> list[CheckResult]:
                         passed=True,
                         check_type="type_flow",
                         step=workflow.steps[0].name,
-                        message=f"Step '{workflow.steps[0].name}' input compatible with workflow input '{workflow.input_schema}'.",
+                        message=(
+                            f"Step '{workflow.steps[0].name}' input compatible "
+                            f"with workflow input '{workflow.input_schema}'."
+                        ),
                         severity="info",
                     )
                 )
@@ -102,9 +105,11 @@ def check_type_flow(workflow: Workflow) -> list[CheckResult]:
                         check_type="type_flow",
                         step=workflow.steps[0].name,
                         message=(
-                            f"Step '{workflow.steps[0].name}' input schema '{first_input.name}' "
-                            f"is not compatible with workflow input schema '{workflow.input_schema}'. "
-                            f"Workflow input fields: {_format_fields(wf_input)}."
+                            f"Step '{workflow.steps[0].name}' input schema "
+                            f"'{first_input.name}' is not compatible with "
+                            f"workflow input schema '{workflow.input_schema}'. "
+                            f"Workflow input fields: "
+                            f"{_format_fields(wf_input)}."
                         ),
                         severity="error",
                     )
@@ -123,7 +128,10 @@ def check_type_flow(workflow: Workflow) -> list[CheckResult]:
                         passed=True,
                         check_type="type_flow",
                         step=workflow.steps[-1].name,
-                        message=f"Step '{workflow.steps[-1].name}' output satisfies workflow output '{workflow.output_schema}'.",
+                        message=(
+                            f"Step '{workflow.steps[-1].name}' output satisfies "
+                            f"workflow output '{workflow.output_schema}'."
+                        ),
                         severity="info",
                     )
                 )
@@ -161,7 +169,9 @@ def check_type_flow(workflow: Workflow) -> list[CheckResult]:
                     passed=True,
                     check_type="type_flow",
                     step=curr_step.name,
-                    message=f"Step '{curr_step.name}' input compatible with '{prev_step.name}' output.",
+                    message=(
+                        f"Step '{curr_step.name}' input compatible with '{prev_step.name}' output."
+                    ),
                     severity="info",
                 )
             )
@@ -172,12 +182,13 @@ def check_type_flow(workflow: Workflow) -> list[CheckResult]:
             incompatible = []
             for field in curr_input.fields:
                 if field.name not in prev_fields:
-                    missing.append(f"{field.name} ({field.type.value if hasattr(field.type, 'value') else field.type})")
+                    ftype = field.type.value if hasattr(field.type, "value") else field.type
+                    missing.append(f"{field.name} ({ftype})")
                 elif not is_compatible(prev_fields[field.name].type, field.type):
-                    incompatible.append(
-                        f"{field.name} (got {prev_fields[field.name].type.value if hasattr(prev_fields[field.name].type, 'value') else prev_fields[field.name].type}, "
-                        f"expected {field.type.value if hasattr(field.type, 'value') else field.type})"
-                    )
+                    prev_t = prev_fields[field.name].type
+                    got = prev_t.value if hasattr(prev_t, "value") else prev_t
+                    exp = field.type.value if hasattr(field.type, "value") else field.type
+                    incompatible.append(f"{field.name} (got {got}, expected {exp})")
 
             parts = []
             if missing:
