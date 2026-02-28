@@ -1,0 +1,51 @@
+{
+  "name": "Undeclared Effect Pipeline",
+  "description": "A step calls an external API but does not declare the effect — should fail effect verification",
+  "schemas": [
+    {
+      "name": "UserInput",
+      "fields": [
+        {"name": "user_id", "type": "Text"},
+        {"name": "query", "type": "Text"}
+      ]
+    },
+    {
+      "name": "SearchResult",
+      "fields": [
+        {"name": "user_id", "type": "Text"},
+        {"name": "results", "type": "Json"}
+      ]
+    },
+    {
+      "name": "NotifyResult",
+      "fields": [
+        {"name": "user_id", "type": "Text"},
+        {"name": "notified", "type": "Bool"}
+      ]
+    }
+  ],
+  "steps": [
+    {
+      "name": "search_external",
+      "description": "Search an external API — this step has config referencing an external service but declares no effects",
+      "input_schema": "UserInput",
+      "output_schema": "SearchResult",
+      "effects": [],
+      "guards": [],
+      "config": {"endpoint": "https://api.example.com/search", "method": "POST"}
+    },
+    {
+      "name": "notify_user",
+      "description": "Send notification to user — declares the effect properly",
+      "input_schema": "SearchResult",
+      "output_schema": "NotifyResult",
+      "effects": [
+        {"kind": "send", "target": "email", "description": "Email search results to user"}
+      ],
+      "guards": []
+    }
+  ],
+  "input_schema": "UserInput",
+  "output_schema": "NotifyResult",
+  "metadata": {}
+}

@@ -1,0 +1,98 @@
+{
+  "name": "CRM Lead Pipeline",
+  "description": "Fetch leads from CRM, enrich with company data, score, and push qualified leads back",
+  "schemas": [
+    {
+      "name": "RawLead",
+      "description": "A lead as fetched from the CRM",
+      "fields": [
+        {"name": "email", "type": "Email", "description": "Contact email"},
+        {"name": "name", "type": "Text", "description": "Full name"},
+        {"name": "company", "type": "Text", "description": "Company name"}
+      ]
+    },
+    {
+      "name": "EnrichedLead",
+      "description": "Lead enriched with company data",
+      "fields": [
+        {"name": "email", "type": "Email", "description": "Contact email"},
+        {"name": "name", "type": "Text", "description": "Full name"},
+        {"name": "company", "type": "Text", "description": "Company name"},
+        {"name": "company_size", "type": "Int", "description": "Number of employees"},
+        {"name": "industry", "type": "Text", "description": "Industry vertical"},
+        {"name": "website", "type": "Url", "description": "Company website"}
+      ]
+    },
+    {
+      "name": "ScoredLead",
+      "description": "Lead with a qualification score",
+      "fields": [
+        {"name": "email", "type": "Email", "description": "Contact email"},
+        {"name": "name", "type": "Text", "description": "Full name"},
+        {"name": "company", "type": "Text", "description": "Company name"},
+        {"name": "company_size", "type": "Int", "description": "Number of employees"},
+        {"name": "industry", "type": "Text", "description": "Industry vertical"},
+        {"name": "website", "type": "Url", "description": "Company website"},
+        {"name": "score", "type": "Int", "description": "Qualification score 0-100"}
+      ]
+    },
+    {
+      "name": "PushResult",
+      "description": "Result of pushing a lead to the CRM",
+      "fields": [
+        {"name": "email", "type": "Email", "description": "Contact email"},
+        {"name": "crm_id", "type": "Text", "description": "CRM record ID"},
+        {"name": "status", "type": "Text", "description": "Push status"}
+      ]
+    }
+  ],
+  "steps": [
+    {
+      "name": "fetch_leads",
+      "description": "Fetch raw leads from Salesforce",
+      "input_schema": null,
+      "output_schema": "RawLead",
+      "effects": [
+        {"kind": "read", "target": "salesforce", "description": "Read leads from Salesforce"}
+      ],
+      "guards": [],
+      "config": {"source": "salesforce", "query": "SELECT Id, Email, Name, Company FROM Lead WHERE Status = 'New'"}
+    },
+    {
+      "name": "enrich_leads",
+      "description": "Enrich leads with company data from Clearbit",
+      "input_schema": "RawLead",
+      "output_schema": "EnrichedLead",
+      "effects": [
+        {"kind": "call", "target": "clearbit", "description": "Call Clearbit API for company enrichment"}
+      ],
+      "guards": [],
+      "config": {}
+    },
+    {
+      "name": "score_leads",
+      "description": "Score leads based on enriched data",
+      "input_schema": "EnrichedLead",
+      "output_schema": "ScoredLead",
+      "effects": [],
+      "guards": [],
+      "config": {"model": "lead_scoring_v2"}
+    },
+    {
+      "name": "push_qualified",
+      "description": "Push qualified leads back to Salesforce",
+      "input_schema": "ScoredLead",
+      "output_schema": "PushResult",
+      "effects": [
+        {"kind": "write", "target": "salesforce", "description": "Update lead records in Salesforce"}
+      ],
+      "guards": [
+        {"condition": "score >= 70", "on_fail": "skip"}
+      ],
+      "config": {}
+    }
+  ],
+  "input_schema": "RawLead",
+  "output_schema": "PushResult",
+  "metadata": {"version": "1.0", "author": "sales-ops", "tags": ["crm", "leads"]}
+}

@@ -1,0 +1,61 @@
+{
+  "name": "Broken Type Pipeline",
+  "description": "Step 2 expects a field that Step 1 does not produce — should fail type verification",
+  "schemas": [
+    {
+      "name": "InputData",
+      "fields": [
+        {"name": "name", "type": "Text"},
+        {"name": "email", "type": "Email"}
+      ]
+    },
+    {
+      "name": "StepOneOutput",
+      "description": "Output of step one — note: no phone_number field",
+      "fields": [
+        {"name": "name", "type": "Text"},
+        {"name": "email", "type": "Email"},
+        {"name": "validated", "type": "Bool"}
+      ]
+    },
+    {
+      "name": "StepTwoOutput",
+      "fields": [
+        {"name": "name", "type": "Text"},
+        {"name": "message_sent", "type": "Bool"}
+      ]
+    },
+    {
+      "name": "StepTwoInput",
+      "description": "Step two expects phone_number which step one does not produce",
+      "fields": [
+        {"name": "name", "type": "Text"},
+        {"name": "phone_number", "type": "Phone"},
+        {"name": "validated", "type": "Bool"}
+      ]
+    }
+  ],
+  "steps": [
+    {
+      "name": "validate_contact",
+      "description": "Validate contact info",
+      "input_schema": "InputData",
+      "output_schema": "StepOneOutput",
+      "effects": [],
+      "guards": []
+    },
+    {
+      "name": "send_sms",
+      "description": "Send an SMS — but requires phone_number which previous step doesn't output",
+      "input_schema": "StepTwoInput",
+      "output_schema": "StepTwoOutput",
+      "effects": [
+        {"kind": "send", "target": "twilio", "description": "Send SMS via Twilio"}
+      ],
+      "guards": []
+    }
+  ],
+  "input_schema": "InputData",
+  "output_schema": "StepTwoOutput",
+  "metadata": {}
+}
