@@ -19,3 +19,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **CLI tool (`wfv`)** — Four subcommands: `verify`, `transpile`, `registry`, `generate`. JSON output mode, strict/non-strict verification.
 - **Documentation** — README with architecture diagram, quick start, and API reference. 7 example scripts. CONTRIBUTING guide with schema contribution walkthrough.
 - **CI/CD** — GitHub Actions for lint (ruff), type check (mypy), test (pytest across Python 3.10-3.13), and PyPI publish.
+- **MCP server** — Model Context Protocol integration with `verify_workflow` and `generate_verified_workflow` tools for inline LLM verification via Claude Desktop or any MCP client.

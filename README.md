@@ -271,6 +271,37 @@ else:
 
 Requires an LLM provider: `pip install workflow-verify[llm]`
 
+## MCP Integration
+
+`workflow-verify` ships as an MCP (Model Context Protocol) server, letting LLMs like Claude verify workflows inline during conversations.
+
+```bash
+pip install workflow-verify[mcp]
+```
+
+**Two tools are exposed:**
+
+| Tool | Description |
+|------|-------------|
+| `verify_workflow` | Takes a workflow AST JSON, verifies it, optionally transpiles, returns result + trace |
+| `generate_verified_workflow` | Takes a prompt, runs the full generate-verify-correct loop, returns AST + code |
+
+**Claude Desktop configuration** (`~/Library/Application Support/Claude/claude_desktop_config.json`):
+
+```json
+{
+  "mcpServers": {
+    "workflow-verify": {
+      "command": "uv",
+      "args": ["--directory", "/path/to/workflow_verify",
+               "run", "python", "-m", "workflow_verify.mcp_server"]
+    }
+  }
+}
+```
+
+Once configured, Claude can verify and transpile workflows directly in conversation.
+
 ## API Reference
 
 All symbols are available from the top-level package:
@@ -311,6 +342,9 @@ pip install workflow-verify[llm]
 
 # With Temporal transpiler runtime
 pip install workflow-verify[temporal]
+
+# MCP server for Claude integration
+pip install workflow-verify[mcp]
 
 # Development
 pip install workflow-verify[dev]

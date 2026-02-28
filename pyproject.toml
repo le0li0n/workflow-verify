@@ -42,6 +42,7 @@ dependencies = [
 [project.optional-dependencies]
 llm = ["anthropic", "openai"]
 temporal = ["temporalio"]
+mcp = ["mcp[cli]>=1.0"]
 dev = [
     "pytest",
     "pytest-asyncio",
