@@ -53,11 +53,11 @@ dev = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/your-org/workflow-verify"
-Documentation = "https://github.com/your-org/workflow-verify#readme"
-Repository = "https://github.com/your-org/workflow-verify"
-Issues = "https://github.com/your-org/workflow-verify/issues"
-Changelog = "https://github.com/your-org/workflow-verify/blob/main/CHANGELOG.md"
+Homepage = "https://github.com/le0li0n/workflow-verify"
+Documentation = "https://github.com/le0li0n/workflow-verify#readme"
+Repository = "https://github.com/le0li0n/workflow-verify"
+Issues = "https://github.com/le0li0n/workflow-verify/issues"
+Changelog = "https://github.com/le0li0n/workflow-verify/blob/main/CHANGELOG.md"
 
 [project.scripts]
 wfv = "workflow_verify.cli:main"

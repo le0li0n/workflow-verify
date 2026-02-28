@@ -4,7 +4,7 @@
 
 [![PyPI](https://img.shields.io/pypi/v/workflow-verify)](https://pypi.org/project/workflow-verify/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![Tests](https://github.com/your-org/workflow-verify/actions/workflows/ci.yml/badge.svg)](https://github.com/your-org/workflow-verify/actions/workflows/ci.yml)
+[![Tests](https://github.com/le0li0n/workflow-verify/actions/workflows/ci.yml/badge.svg)](https://github.com/le0li0n/workflow-verify/actions/workflows/ci.yml)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10%2B-blue.svg)](https://www.python.org/downloads/)
 
 ---
