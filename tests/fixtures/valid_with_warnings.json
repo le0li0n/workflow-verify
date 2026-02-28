@@ -1,0 +1,51 @@
+{
+  "name": "Pipeline With Warnings",
+  "description": "A valid pipeline that passes verification but produces warnings",
+  "schemas": [
+    {
+      "name": "ContactInput",
+      "fields": [
+        {"name": "name", "type": "Text"},
+        {"name": "email", "type": "Email"}
+      ]
+    },
+    {
+      "name": "EnrichedContact",
+      "fields": [
+        {"name": "name", "type": "Text"},
+        {"name": "email", "type": "Email"},
+        {"name": "company", "type": "Text"}
+      ]
+    },
+    {
+      "name": "SaveResult",
+      "fields": [
+        {"name": "id", "type": "Text"},
+        {"name": "saved", "type": "Bool"}
+      ]
+    }
+  ],
+  "steps": [
+    {
+      "name": "enrich_contact",
+      "description": "Call the Clearbit API to enrich contact data",
+      "input_schema": "ContactInput",
+      "output_schema": "EnrichedContact",
+      "effects": [],
+      "guards": []
+    },
+    {
+      "name": "save_to_hubspot",
+      "description": "Write enriched contact to HubSpot CRM",
+      "input_schema": "EnrichedContact",
+      "output_schema": "SaveResult",
+      "effects": [
+        {"kind": "write", "target": "hubspot", "description": "Create/update HubSpot contact"}
+      ],
+      "guards": []
+    }
+  ],
+  "input_schema": "ContactInput",
+  "output_schema": "SaveResult",
+  "metadata": {"version": "1.0"}
+}

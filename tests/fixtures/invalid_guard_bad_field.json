@@ -1,0 +1,36 @@
+{
+  "name": "Guard References Bad Field",
+  "description": "A guard condition references a field that doesn't exist in the step's input schema",
+  "schemas": [
+    {
+      "name": "LeadInput",
+      "fields": [
+        {"name": "name", "type": "Text"},
+        {"name": "email", "type": "Email"}
+      ]
+    },
+    {
+      "name": "LeadOutput",
+      "fields": [
+        {"name": "name", "type": "Text"},
+        {"name": "email", "type": "Email"},
+        {"name": "processed", "type": "Bool"}
+      ]
+    }
+  ],
+  "steps": [
+    {
+      "name": "filter_leads",
+      "description": "Filter leads by score",
+      "input_schema": "LeadInput",
+      "output_schema": "LeadOutput",
+      "effects": [],
+      "guards": [
+        {"condition": "score >= 70", "on_fail": "skip"}
+      ]
+    }
+  ],
+  "input_schema": "LeadInput",
+  "output_schema": "LeadOutput",
+  "metadata": {}
+}

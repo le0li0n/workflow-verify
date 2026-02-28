@@ -1,0 +1,123 @@
+{
+  "name": "Complex Lead Processing Pipeline",
+  "description": "5-step pipeline: fetch, validate, enrich, score, sync — with multiple effects and guards",
+  "schemas": [
+    {
+      "name": "RawLead",
+      "fields": [
+        {"name": "email", "type": "Email"},
+        {"name": "name", "type": "Text"},
+        {"name": "source", "type": "Text"}
+      ]
+    },
+    {
+      "name": "ValidatedLead",
+      "fields": [
+        {"name": "email", "type": "Email"},
+        {"name": "name", "type": "Text"},
+        {"name": "source", "type": "Text"},
+        {"name": "email_valid", "type": "Bool"}
+      ]
+    },
+    {
+      "name": "EnrichedLead",
+      "fields": [
+        {"name": "email", "type": "Email"},
+        {"name": "name", "type": "Text"},
+        {"name": "source", "type": "Text"},
+        {"name": "email_valid", "type": "Bool"},
+        {"name": "company", "type": "Text"},
+        {"name": "company_size", "type": "Int"},
+        {"name": "industry", "type": "Text"},
+        {"name": "linkedin_url", "type": "Url"}
+      ]
+    },
+    {
+      "name": "ScoredLead",
+      "fields": [
+        {"name": "email", "type": "Email"},
+        {"name": "name", "type": "Text"},
+        {"name": "company", "type": "Text"},
+        {"name": "company_size", "type": "Int"},
+        {"name": "industry", "type": "Text"},
+        {"name": "score", "type": "Int"},
+        {"name": "tier", "type": "Text"}
+      ]
+    },
+    {
+      "name": "SyncResult",
+      "fields": [
+        {"name": "email", "type": "Email"},
+        {"name": "crm_id", "type": "Text"},
+        {"name": "synced_at", "type": "DateTime"},
+        {"name": "status", "type": "Text"}
+      ]
+    }
+  ],
+  "steps": [
+    {
+      "name": "fetch_leads",
+      "description": "Read new leads from the inbound queue",
+      "input_schema": null,
+      "output_schema": "RawLead",
+      "effects": [
+        {"kind": "read", "target": "lead_queue", "description": "Read from inbound lead queue"}
+      ],
+      "guards": []
+    },
+    {
+      "name": "validate_email",
+      "description": "Validate lead email addresses",
+      "input_schema": "RawLead",
+      "output_schema": "ValidatedLead",
+      "effects": [
+        {"kind": "call", "target": "email_validator", "description": "Call email validation API"}
+      ],
+      "guards": [
+        {"condition": "email is not null", "on_fail": "skip"}
+      ]
+    },
+    {
+      "name": "enrich_company",
+      "description": "Enrich lead with company data from Clearbit",
+      "input_schema": "ValidatedLead",
+      "output_schema": "EnrichedLead",
+      "effects": [
+        {"kind": "call", "target": "clearbit", "description": "Clearbit company enrichment"}
+      ],
+      "guards": [
+        {"condition": "email_valid == true", "on_fail": "skip"}
+      ]
+    },
+    {
+      "name": "score_lead",
+      "description": "Score lead based on enrichment data",
+      "input_schema": "EnrichedLead",
+      "output_schema": "ScoredLead",
+      "effects": [],
+      "guards": [
+        {"condition": "company_size >= 10", "on_fail": "default", "default_value": {"score": 0, "tier": "unqualified"}}
+      ]
+    },
+    {
+      "name": "sync_to_crm",
+      "description": "Push qualified leads to Salesforce",
+      "input_schema": "ScoredLead",
+      "output_schema": "SyncResult",
+      "effects": [
+        {"kind": "write", "target": "salesforce", "description": "Create/update Salesforce lead record"},
+        {"kind": "send", "target": "slack", "description": "Notify sales channel of new qualified lead"}
+      ],
+      "guards": [
+        {"condition": "score >= 50", "on_fail": "skip"}
+      ]
+    }
+  ],
+  "input_schema": "RawLead",
+  "output_schema": "SyncResult",
+  "metadata": {
+    "version": "2.1",
+    "author": "growth-eng",
+    "tags": ["leads", "crm", "enrichment", "scoring"]
+  }
+}

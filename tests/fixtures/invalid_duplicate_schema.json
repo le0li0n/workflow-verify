@@ -1,0 +1,40 @@
+{
+  "name": "Duplicate Schema Names",
+  "description": "Two schemas share the same name",
+  "schemas": [
+    {
+      "name": "UserData",
+      "fields": [
+        {"name": "name", "type": "Text"},
+        {"name": "email", "type": "Email"}
+      ]
+    },
+    {
+      "name": "UserData",
+      "description": "Oops, same name as above",
+      "fields": [
+        {"name": "name", "type": "Text"},
+        {"name": "phone", "type": "Phone"}
+      ]
+    },
+    {
+      "name": "Result",
+      "fields": [
+        {"name": "success", "type": "Bool"}
+      ]
+    }
+  ],
+  "steps": [
+    {
+      "name": "process_user",
+      "description": "Process user data",
+      "input_schema": "UserData",
+      "output_schema": "Result",
+      "effects": [],
+      "guards": []
+    }
+  ],
+  "input_schema": "UserData",
+  "output_schema": "Result",
+  "metadata": {}
+}

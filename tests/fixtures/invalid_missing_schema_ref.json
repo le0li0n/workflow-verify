@@ -1,0 +1,26 @@
+{
+  "name": "Missing Schema Reference",
+  "description": "A step references a schema that does not exist in the schemas list",
+  "schemas": [
+    {
+      "name": "InputData",
+      "fields": [
+        {"name": "name", "type": "Text"},
+        {"name": "email", "type": "Email"}
+      ]
+    }
+  ],
+  "steps": [
+    {
+      "name": "process",
+      "description": "Process the input",
+      "input_schema": "InputData",
+      "output_schema": "ProcessedData",
+      "effects": [],
+      "guards": []
+    }
+  ],
+  "input_schema": "InputData",
+  "output_schema": "ProcessedData",
+  "metadata": {}
+}
