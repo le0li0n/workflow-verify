@@ -162,8 +162,14 @@ class TestInvalidUndeclaredEffect:
     def test_warns_about_undeclared_effect(self):
         wf = load_fixture("invalid_undeclared_effect.json")
         result = verify(wf)
-        # This is a heuristic warning, not an error — workflow still passes
+        # This is a heuristic warning, not an error — workflow still passes in non-strict mode
         assert result.passed
+        assert len(result.warnings) > 0
+
+    def test_strict_mode_fails_on_warnings(self):
+        wf = load_fixture("invalid_undeclared_effect.json")
+        result = verify(wf, strict=True)
+        assert not result.passed
         assert len(result.warnings) > 0
 
     def test_warning_identifies_step(self):

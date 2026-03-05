@@ -37,7 +37,7 @@ except ImportError:
 
 def verify_workflow(
     workflow_json: str,
-    strict: bool = True,
+    strict: bool = False,
     target: str | None = None,
 ) -> str:
     """Verify a workflow AST and optionally transpile it to code.

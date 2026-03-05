@@ -24,9 +24,9 @@ def _build_parser() -> argparse.ArgumentParser:
         help="Output as JSON",
     )
     p_verify.add_argument(
-        "--no-strict",
+        "--strict",
         action="store_true",
-        help="Treat undeclared effects as warnings",
+        help="Treat warnings as errors (fail on undeclared effects, etc.)",
     )
 
     # --- transpile ---
@@ -99,7 +99,7 @@ def _cmd_verify(args: argparse.Namespace) -> int:
         print(f"Error: failed to parse workflow: {e}", file=sys.stderr)
         return 1
 
-    strict = not args.no_strict
+    strict = args.strict
     result = verify(workflow, strict=strict)
 
     if args.json_output:
