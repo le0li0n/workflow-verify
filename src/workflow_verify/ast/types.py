@@ -96,10 +96,6 @@ def is_compatible(source: AnyWFType, target: AnyWFType) -> bool:
     # Any is the universal escape hatch
     if source is WFType.ANY or target is WFType.ANY:
         return True
-    if isinstance(source, WFType) and source == WFType.ANY:
-        return True
-    if isinstance(target, WFType) and target == WFType.ANY:
-        return True
 
     # Scalar subtype checks
     if isinstance(source, WFType) and isinstance(target, WFType):
