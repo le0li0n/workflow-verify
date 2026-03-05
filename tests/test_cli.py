@@ -40,7 +40,7 @@ class TestHelp:
         r = run_cli("verify", "--help")
         assert r.returncode == 0
         assert "--json" in r.stdout
-        assert "--no-strict" in r.stdout
+        assert "--strict" in r.stdout
 
     def test_transpile_help(self):
         r = run_cli("transpile", "--help")
@@ -85,9 +85,9 @@ class TestVerifyCommand:
         assert r.returncode == 0
         assert "Effects" in r.stdout or "effects" in r.stdout.lower()
 
-    def test_no_strict_mode(self):
-        r = run_cli("verify", str(FIXTURES / "valid_with_warnings.json"), "--no-strict")
-        assert r.returncode == 0
+    def test_strict_mode_fails_on_warnings(self):
+        r = run_cli("verify", str(FIXTURES / "valid_with_warnings.json"), "--strict")
+        assert r.returncode == 1
 
 
 # --- Transpile ---

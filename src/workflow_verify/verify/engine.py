@@ -12,7 +12,7 @@ from .schema_checker import check_schemas
 from .type_checker import check_type_flow
 
 
-def verify(workflow: Workflow, strict: bool = True) -> VerificationResult:
+def verify(workflow: Workflow, strict: bool = False) -> VerificationResult:
     """Main entry point. Runs all checkers, aggregates results.
 
     Args:
@@ -48,7 +48,7 @@ def verify(workflow: Workflow, strict: bool = True) -> VerificationResult:
     warnings = [c for c in all_checks if c.severity == "warning"]
 
     if strict:
-        passed = len(errors) == 0
+        passed = len(errors) == 0 and len(warnings) == 0
     else:
         passed = len(errors) == 0
 

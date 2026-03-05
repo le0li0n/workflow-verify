@@ -134,7 +134,7 @@ def run_sync(
     )
 
 
-def effects(workflow: Workflow, *, strict: bool = True) -> list[Effect]:
+def effects(workflow: Workflow, *, strict: bool = False) -> list[Effect]:
     """Verify a workflow and return its effects manifest.
 
     Args:
